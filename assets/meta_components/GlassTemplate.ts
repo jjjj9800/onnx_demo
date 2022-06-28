@@ -52,25 +52,25 @@ export class GlassTemplate {
         overAll: new THREE.Group(),
         overAllTransform: {
             position: new THREE.Vector3(),
-            rotation: new THREE.Quaternion(),
+            rotation: new THREE.Euler(),
             scale: new THREE.Vector3()
         },
         front: new THREE.Object3D(),
         frontTransform: {
             position: new THREE.Vector3(),
-            rotation: new THREE.Quaternion(),
+            rotation: new THREE.Euler(),
             scale: new THREE.Vector3()
         },
         right: new THREE.Object3D(),
         rightTransform: {
             position: new THREE.Vector3(),
-            rotation: new THREE.Quaternion(),
+            rotation: new THREE.Euler(),
             scale: new THREE.Vector3()
         },
         left: new THREE.Object3D(),
         leftTransform: {
             position: new THREE.Vector3(),
-            rotation: new THREE.Quaternion(),
+            rotation: new THREE.Euler(),
             scale: new THREE.Vector3()
         },
     }
@@ -138,8 +138,6 @@ export class GlassTemplate {
 
                     if (item.isMesh) {
                         if (item.name === "LEFT") {
-                            this.templateObject.leftTransform.scale = item.scale.clone();
-                            this.templateObject.leftTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader!.load("/Glasses_Right.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
@@ -148,11 +146,11 @@ export class GlassTemplate {
                             item.position.y = -0.001;
                             this.templateObject.left = item;
                             this.templateObject.leftTransform.position = item.position.clone();
+                            this.templateObject.leftTransform.scale = item.scale.clone();
+                            this.templateObject.leftTransform.rotation = item.rotation.clone();
 
                             console.log(item)
                         } else if (item.name === "RIGHT") {
-                            this.templateObject.rightTransform.scale = item.scale.clone();
-                            this.templateObject.rightTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader?.load("/Glasses_Left.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
@@ -161,9 +159,9 @@ export class GlassTemplate {
                             item.position.y = -0.0047;
                             this.templateObject.right = item;
                             this.templateObject.rightTransform.position = item.position.clone();
+                            this.templateObject.rightTransform.scale = item.scale.clone();
+                            this.templateObject.rightTransform.rotation = item.rotation.clone();
                         } else if (item.name === "FRONT") {
-                            this.templateObject.frontTransform.scale = item.scale.clone();
-                            this.templateObject.frontTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader?.load("/Glasses_Front.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
@@ -172,6 +170,8 @@ export class GlassTemplate {
                             item.position.y = 0;
                             this.templateObject.front = item;
                             this.templateObject.frontTransform.position = item.position.clone();
+                            this.templateObject.frontTransform.scale = item.scale.clone();
+                            this.templateObject.frontTransform.rotation = item.rotation.clone();
                         }
                     }
                 })
@@ -246,23 +246,39 @@ export class GlassTemplate {
         }
     }
 
-    setOverAllPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.overAllTransform.position.clone().add(new THREE.Vector3(x, y, z));
-        this.templateObject.overAll.position.set(pos.x, pos.y, pos.z)
+    setOverAllPosition(pos:{x:number, y: number, z: number}, rot:{x:number, y: number, z: number}, scale:{x:number, y: number, z: number}) {
+        const _pos = this.templateObject.overAllTransform.position.clone().add(new THREE.Vector3(pos.x, pos.y, pos.z));
+        const _rot = this.templateObject.overAllTransform.rotation.clone();
+        const _scale = this.templateObject.overAllTransform.scale.clone().add(new THREE.Vector3(scale.x, scale.y, scale.z))
+        this.templateObject.overAll.position.set(_pos.x, _pos.y, _pos.z)
+        this.templateObject.overAll.rotation.set(_rot.x+rot.x, _rot.y+rot.y, _rot.z+rot.z)
+        this.templateObject.overAll.scale.set(_scale.x, _scale.y, _scale.z)
     }
 
-    setFrontPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.frontTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
-        this.templateObject.front.position.set(pos.x, pos.y, pos.z)
+    setFrontPosition(pos:{x:number, y: number, z: number}, rot:{x:number, y: number, z: number}, scale:{x:number, y: number, z: number}) {
+        const _pos = this.templateObject.frontTransform.position.clone().add(new THREE.Vector3(pos.x/100, pos.y/100, pos.z/100));
+        const _rot = this.templateObject.frontTransform.rotation.clone();
+        const _scale = this.templateObject.frontTransform.scale.clone().add(new THREE.Vector3(scale.x/100, scale.y/100, scale.z/100))
+        this.templateObject.front.position.set(_pos.x, _pos.y, _pos.z)
+        this.templateObject.front.rotation.set(_rot.x+rot.x, _rot.y+rot.y, _rot.z+rot.z)
+        this.templateObject.front.scale.set(_scale.x, _scale.y, _scale.z)
     }
 
-    setLeftPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.leftTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
-        this.templateObject.left.position.set(pos.x, pos.y, pos.z)
+    setLeftPosition(pos:{x:number, y: number, z: number}, rot:{x:number, y: number, z: number}, scale:{x:number, y: number, z: number}) {
+        const _pos = this.templateObject.leftTransform.position.clone().add(new THREE.Vector3(pos.x/100, pos.y/100, pos.z/100));
+        const _rot = this.templateObject.leftTransform.rotation.clone();
+        const _scale = this.templateObject.leftTransform.scale.clone().add(new THREE.Vector3(scale.x/100, scale.y/100, scale.z/100))
+        this.templateObject.left.position.set(_pos.x, _pos.y, _pos.z)
+        this.templateObject.left.rotation.set(_rot.x+rot.x, _rot.y+rot.y, _rot.z+rot.z)
+        this.templateObject.left.scale.set(_scale.x, _scale.y, _scale.z)
     }
 
-    setRightPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.rightTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
-        this.templateObject.right.position.set(pos.x, pos.y, pos.z)
+    setRightPosition(pos:{x:number, y: number, z: number}, rot:{x:number, y: number, z: number}, scale:{x:number, y: number, z: number}) {
+        const _pos = this.templateObject.rightTransform.position.clone().add(new THREE.Vector3(pos.x/100, pos.y/100, pos.z/100));
+        const _rot = this.templateObject.rightTransform.rotation.clone();
+        const _scale = this.templateObject.rightTransform.scale.clone().add(new THREE.Vector3(scale.x/100, scale.y/100, scale.z/100))
+        this.templateObject.right.position.set(_pos.x, _pos.y, _pos.z)
+        this.templateObject.right.rotation.set(_rot.x+rot.x, _rot.y+rot.y, _rot.z+rot.z)
+        this.templateObject.right.scale.set(_scale.x, _scale.y, _scale.z)
     }
 }

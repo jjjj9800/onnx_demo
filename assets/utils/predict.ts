@@ -3,8 +3,14 @@ import * as ort from "onnxruntime-web";
 let session: ort.InferenceSession|null = null;
 
 export async function initOnnx() {
-    session = await ort.InferenceSession.create("/_next/static/chunks/pages/fused_bisenet4_model_simplified_HWC.onnx",
-        {executionProviders: ["wasm"]});
+    // const modelPath = "/_next/static/chunks/pages/fused_bisenet4_model_simplified_HWC.onnx";
+    // const modelPath = "/_next/static/chunks/pages/fused_bisenet4s2_model_simplified_HWC.onnx";
+    //
+    const modelPath = "/_next/static/chunks/pages/bisenet4_model_simplified_HWC.onnx";
+    // const modelPath = "/_next/static/chunks/pages/bisenet4s2_model_simplified_HWC.onnx";
+
+    session = await ort.InferenceSession.create(modelPath,
+        {executionProviders: ["wasm"], enableMemPattern: true, enableProfiling: true, interOpNumThreads: 4});
     console.log(session)
 }
 

@@ -80,9 +80,10 @@ export function CameraView() {
                             x = 0;
                         }
                         const a = alphaAns.data[aCount] as number;
+                        //console.log(a)
                         aCount++;
                         if (masksAns.data[i] > 0.4) {
-                            ctx.fillStyle = `rgba(${r},${g},${b},0.5)`;
+                            ctx.fillStyle = `rgba(${r},${g},${b}, 0.5)`;
                             ctx.fillRect(x, y, 1, 1);
                         }
 
@@ -97,10 +98,10 @@ export function CameraView() {
 
     return (
         <div>
-            <video autoPlay playsInline muted ref={webCam}
+            <video autoPlay playsInline muted ref={webCam} style={{marginLeft: 10}}
                    id="webcam" width="256" height="256"/>
-            <canvas width={256} height={256} ref={canvasVideo} />
-            <canvas width={256} height={256} ref={hairView} />
+            <canvas width={256} height={256} ref={canvasVideo} style={{marginLeft: 10}} />
+            <canvas width={256} height={256} ref={hairView} style={{marginLeft: 10, display: "none"}} />
 
             <br />
             <button onClick={()=>{setIsPredict(!isPredict); isLoad=true}}>

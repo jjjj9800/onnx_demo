@@ -131,10 +131,15 @@ export class GlassTemplate {
 
                     if(item.isGroup){
                         this.templateObject.overAll = item;
+                        this.templateObject.overAllTransform.position = item.position.clone();
+                        this.templateObject.overAllTransform.scale = item.scale.clone();
+                        this.templateObject.overAllTransform.rotation = item.rotation.clone();
                     }
 
                     if (item.isMesh) {
                         if (item.name === "LEFT") {
+                            this.templateObject.leftTransform.scale = item.scale.clone();
+                            this.templateObject.leftTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader!.load("/Glasses_Right.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
@@ -142,22 +147,31 @@ export class GlassTemplate {
                             item.scale.y *= (1024/3029);
                             item.position.y = -0.001;
                             this.templateObject.left = item;
+                            this.templateObject.leftTransform.position = item.position.clone();
+
+                            console.log(item)
                         } else if (item.name === "RIGHT") {
+                            this.templateObject.rightTransform.scale = item.scale.clone();
+                            this.templateObject.rightTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader?.load("/Glasses_Left.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
                             item.material.map = tex;
                             item.scale.y *= (1024/2758);
                             item.position.y = -0.0047;
-                            this.templateObject.left = item;
+                            this.templateObject.right = item;
+                            this.templateObject.rightTransform.position = item.position.clone();
                         } else if (item.name === "FRONT") {
+                            this.templateObject.frontTransform.scale = item.scale.clone();
+                            this.templateObject.frontTransform.rotation = item.rotation.clone();
                             const tex = this.imageLoader?.load("/Glasses_Front.png");
                             tex!.flipY = false;
                             tex!.encoding = THREE.sRGBEncoding;
                             item.material.map = tex;
                             item.scale.y *= (1024/3143);
                             item.position.y = 0;
-                            this.templateObject.left = item;
+                            this.templateObject.front = item;
+                            this.templateObject.frontTransform.position = item.position.clone();
                         }
                     }
                 })
@@ -211,18 +225,44 @@ export class GlassTemplate {
         }
     }
 
+    changeTexture(part: string, url:string, size: {width: number, height: number}) {
+        const tex = this.imageLoader?.load(url);
+        tex!.flipY = false;
+        tex!.encoding = THREE.sRGBEncoding;
+        if(part === "front"){
+            this.templateObject.front.scale.y =  this.templateObject.frontTransform.scale.y*(size.height/size.width);
+            //@ts-ignore
+            this.templateObject.front.material.map = tex;
+        }
+        else if(part === "right"){
+            this.templateObject.right.scale.y =  this.templateObject.rightTransform.scale.y*(size.height/size.width);
+            //@ts-ignore
+            this.templateObject.right.material.map = tex
+        }
+        else if(part === "left"){
+            this.templateObject.left.scale.y =  this.templateObject.leftTransform.scale.y*(size.height/size.width);
+            //@ts-ignore
+            this.templateObject.left.material.map = tex;
+        }
+    }
+
     setOverAllPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.overAllTransform.position.add(new THREE.Vector3(x, y, z));
+        const pos = this.templateObject.overAllTransform.position.clone().add(new THREE.Vector3(x, y, z));
         this.templateObject.overAll.position.set(pos.x, pos.y, pos.z)
     }
 
+    setFrontPosition(x:number=0, y: number=0, z: number=0) {
+        const pos = this.templateObject.frontTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
+        this.templateObject.front.position.set(pos.x, pos.y, pos.z)
+    }
+
     setLeftPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.leftTransform.position.add(new THREE.Vector3(x, y, z));
+        const pos = this.templateObject.leftTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
         this.templateObject.left.position.set(pos.x, pos.y, pos.z)
     }
 
     setRightPosition(x:number=0, y: number=0, z: number=0) {
-        const pos = this.templateObject.rightTransform.position.add(new THREE.Vector3(x, y, z));
+        const pos = this.templateObject.rightTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
         this.templateObject.right.position.set(pos.x, pos.y, pos.z)
     }
 }

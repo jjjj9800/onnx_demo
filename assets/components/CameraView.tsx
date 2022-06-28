@@ -51,19 +51,16 @@ export function CameraView() {
         ctx!.restore();
 
         const imageData = ctx!.getImageData(0, 0, webCam.current!.width, webCam.current!.height);
-        const [redArray, greenArray, blueArray] = new Array(new Array<number>(), new Array<number>(), new Array<number>());
+        const colorData = new Array<number>();
         for (let i = 0; i < imageData.data.length; i += 4) {
-            redArray.push(imageData.data[i] /255.0);
-            greenArray.push(imageData.data[i + 1] /255.0);
-            blueArray.push(imageData.data[i + 2]/255.0);
+            colorData.push((imageData.data[i]-127.5)/127.5);
+            colorData.push((imageData.data[i + 1]-127.5)/127.5);
+            colorData.push((imageData.data[i + 2]-127.5)/127.5);
             // skip data[i + 3] to filter out the alpha channel
         }
-        const transposedData = redArray.concat(greenArray).concat(blueArray);
-        //console.log(transposedData.length)
 
-        //console.log(imageData);
         if(isLoad){
-            const result = await predict(new ort.Tensor("float32", transposedData, [1, 3, 256, 256]));
+            const result = await predict(new ort.Tensor("float32", colorData, [1, 256, 256, 3]));
             // console.log(result);
             if(result){
                 const masksAns: ort.Tensor = result["masks"];
@@ -85,7 +82,7 @@ export function CameraView() {
                         const a = alphaAns.data[aCount] as number;
                         aCount++;
                         if (masksAns.data[i] > 0.4) {
-                            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+                            ctx.fillStyle = `rgba(${r},${g},${b},0.5)`;
                             ctx.fillRect(x, y, 1, 1);
                         }
 

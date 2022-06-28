@@ -3,7 +3,7 @@ import * as ort from "onnxruntime-web";
 let session: ort.InferenceSession|null = null;
 
 export async function initOnnx() {
-    session = await ort.InferenceSession.create("/_next/static/chunks/pages/bisenet4_model.onnx",
+    session = await ort.InferenceSession.create("/_next/static/chunks/pages/fused_bisenet4_model_simplified_HWC.onnx",
         {executionProviders: ["wasm"]});
     console.log(session)
 }

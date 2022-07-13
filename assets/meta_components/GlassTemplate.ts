@@ -13,40 +13,18 @@ export interface IModelLoaderManager {
 }
 
 export class GlassTemplate {
-    canvasDomElement: HTMLDivElement | undefined;
-    scene: THREE.Scene | undefined;
-    camera: THREE.PerspectiveCamera | undefined;
-    controller: OrbitControls | undefined;
-    clock: THREE.Clock | undefined;
-    renderer: THREE.WebGLRenderer | undefined;
-    ambientLight: THREE.AmbientLight | undefined;
-    directionalLight: THREE.DirectionalLight | undefined;
-    background: THREE.Texture | undefined;
-
-    imageLoader: THREE.TextureLoader | undefined;
+    private readonly canvasDomElement: HTMLDivElement | undefined;
+    private readonly scene: THREE.Scene | undefined;
+    private readonly camera: THREE.PerspectiveCamera | undefined;
+    private controller: OrbitControls | undefined;
+    private clock: THREE.Clock | undefined;
+    private readonly renderer: THREE.WebGLRenderer | undefined;
+    private imageLoader: THREE.TextureLoader | undefined;
     private frameId: number | undefined;
-    private startTouchPosition: { x: number, y: number } | undefined;
-    mixer: any = {};
-    animationList: any = [];
-    modelObject: THREE.Object3D | undefined;
-    touchItem = false;
+    private modelObject: THREE.Object3D | undefined;
 
-    needUpdateScript = false;
-    time: number = 0.0;
     startTime: number = 0.0;
     prevTime: number = 0.0;
-
-    events: any = {
-        init: [],
-        start: [],
-        stop: [],
-        keydown: [],
-        keyup: [],
-        pointerdown: [],
-        pointerup: [],
-        pointermove: [],
-        update: []
-    };
 
     private templateObject = {
         overAll: new THREE.Group(),
@@ -99,7 +77,7 @@ export class GlassTemplate {
         this.start();
     }
 
-    loadScene(sceneUrl: string, backgroundUrl?: string, callback?: () => void) {
+    public loadScene(sceneUrl: string, callback?: () => void) {
         this.downloadScene(sceneUrl, (result: any) => {
             let loader = new THREE.ObjectLoader();
             loader.parse<THREE.Scene>(result.scene, async (obj: any) => {
@@ -188,7 +166,7 @@ export class GlassTemplate {
         });
     }
 
-    downloadScene(url: string, callback: any) {
+    private downloadScene(url: string, callback: any) {
         fetch(url).then(response => {
             return response.json();
         }).then(data => {
@@ -198,7 +176,7 @@ export class GlassTemplate {
         })
     }
 
-    start() {
+    private start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
@@ -206,7 +184,7 @@ export class GlassTemplate {
         this.startTime = this.prevTime = performance.now();
     }
 
-    animate() {
+    private animate() {
         this.renderScene();
         const mixerUpdateDelta = this.clock?.getDelta();
 
@@ -216,16 +194,14 @@ export class GlassTemplate {
         }
     }
 
-    renderScene() {
+    private renderScene() {
         if (this.scene && this.camera && this.renderer) {
             this.renderer.setClearColor(0x000000, 0);
             this.renderer.render(this.scene, this.camera);
-            // console.log(this)
-            // console.log(`render scene`)
         }
     }
 
-    changeTexture(part: string, url:string, size: {width: number, height: number}) {
+    public changeTexture(part: "front"|"right"|"left", url:string, size: {width: number, height: number}) {
         const tex = this.imageLoader?.load(url);
         tex!.flipY = false;
         tex!.encoding = THREE.sRGBEncoding;
@@ -246,22 +222,22 @@ export class GlassTemplate {
         }
     }
 
-    setOverAllPosition(x:number=0, y: number=0, z: number=0) {
+    public setOverAllPosition(x:number=0, y: number=0, z: number=0) {
         const pos = this.templateObject.overAllTransform.position.clone().add(new THREE.Vector3(x, y, z));
         this.templateObject.overAll.position.set(pos.x, pos.y, pos.z)
     }
 
-    setFrontPosition(x:number=0, y: number=0, z: number=0) {
+    public setFrontPosition(x:number=0, y: number=0, z: number=0) {
         const pos = this.templateObject.frontTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
         this.templateObject.front.position.set(pos.x, pos.y, pos.z)
     }
 
-    setLeftPosition(x:number=0, y: number=0, z: number=0) {
+    public setLeftPosition(x:number=0, y: number=0, z: number=0) {
         const pos = this.templateObject.leftTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
         this.templateObject.left.position.set(pos.x, pos.y, pos.z)
     }
 
-    setRightPosition(x:number=0, y: number=0, z: number=0) {
+    public setRightPosition(x:number=0, y: number=0, z: number=0) {
         const pos = this.templateObject.rightTransform.position.clone().add(new THREE.Vector3(x/100, y/100, z/100));
         this.templateObject.right.position.set(pos.x, pos.y, pos.z)
     }

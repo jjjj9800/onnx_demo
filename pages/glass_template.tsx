@@ -21,7 +21,7 @@ function GlassTemplateView() {
         if (modelViewDom.current !== null && !template) {
             const modeView = modelViewDom.current;
             template = new GlassTemplate(modeView, {width: modeView.clientWidth, height: modeView.clientHeight});
-            template.loadScene("/template_glass_01.json", undefined, () => {
+            template.loadScene("/template_glass_01.json", () => {
                 console.log(`load done`)
             })
         }
